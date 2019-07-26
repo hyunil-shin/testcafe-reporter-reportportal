@@ -110,11 +110,11 @@ export default class ProductReport {
 
     async finishFixture() {
         if (!this.connected) return;     
-        this.fixtureList.forEach(async (fixtureId, idx) => {
+        await Promise.all(this.fixtureList.map(async (fixtureId, idx) => {
             await this.rpClient.finishTestItem(fixtureId, {
                 end_time: this.rpClient.helpers.now()
             });
-        });
+        }));
     }
 
     async finishLaunch(launchId) {
