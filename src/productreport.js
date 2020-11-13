@@ -20,11 +20,12 @@ export default class ProductReport {
             endpoint : baseUrl,
             launch : this.launchName,
             project : this.projectName
+            debug: true
         });
 
         this.rpClient.checkConnect().then((response) => {
             this.connected = true;
-            // console.log('You have successfully connected to the server.');
+            console.log('You have successfully connected to the server.');
             // console.log(`You are using an account: ${response.full_name}`);
         }, (error) => {
             console.warn('Error connecting to ReportPortal, confirm that your details are correct.');
