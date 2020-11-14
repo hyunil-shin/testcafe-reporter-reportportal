@@ -39,5 +39,8 @@
     "envs": "^0.1.6",
     "reportportal-js-client": "^2.1.0",
     "strip-ansi": "^5.0.0"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.4"
   }
 }
