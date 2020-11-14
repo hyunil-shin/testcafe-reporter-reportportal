@@ -19,7 +19,7 @@ export default class ProductReport {
             token : process.env.REPORT_PORTAL_TOKEN,
             endpoint : baseUrl,
             launch : this.launchName,
-            project : this.projectName
+            project : this.projectName,
             debug: true
         });
 
@@ -72,7 +72,7 @@ export default class ProductReport {
 
                 const screenshotContent = fs.readFileSync(screenshot.screenshotPath);
 
-                this.rpClient.sendLog(stepObj.tempId, 
+                this.rpClient.sendLog(stepObj.tempId,
                     {
                         status: 'error',
                         message: 'Error Screenshot',
@@ -110,7 +110,7 @@ export default class ProductReport {
     }
 
     async finishFixture() {
-        if (!this.connected) return;     
+        if (!this.connected) return;
         await Promise.all(this.fixtureList.map(async (fixtureId, idx) => {
             await this.rpClient.finishTestItem(fixtureId, {
                 end_time: this.rpClient.helpers.now()
