@@ -119,11 +119,13 @@ export default class ProductReport {
     }
 
     async finishLaunch(launchId) {
+        console.log('finishLaunch: start')
         if (!this.connected) return;
         await this.finishFixture();
         await this.rpClient.finishLaunch(launchId, {
             end_time: this.rpClient.helpers.now()
         });
+        console.log('finishLaunch: end')
     }
 
 }

@@ -3,18 +3,18 @@ const ProductReport = require('./productreport');
 export default function () {
     return {
         noColors: false,
-        
+
         reportTaskStart (startTime, userAgents, testCount) {
             this.startTime = startTime;
             this.testCount = testCount;
-        
+
             this.write(`Running tests in: ${userAgents}`)
                 .newline();
-                
+
             this.productReport = new ProductReport();
             this.launchId = this.productReport.startLaunch();
         },
-        
+
         reportFixtureStart (name) {
             this.fixtureId = this.productReport.captureFixtureItem(this.launchId, name);
 
@@ -23,14 +23,14 @@ export default function () {
                 .write(`[${this.chalk.blue(name)}]`)
                 .newline();
         },
-        
+
         reportTestDone (name, testRunInfo) {
             const self = this;
             const hasErr = !!testRunInfo.errs.length;
             const result = testRunInfo.skipped ? 'skipped' : hasErr ? 'failed' : 'passed';
-        
+
             const title = `[ ${result === 'passed' ? this.chalk.green.bold('✓') : result === 'skipped' ? this.chalk.blue.bold('-') : this.chalk.red.bold('✖')} ] ${name}`;
-        
+
             this.setIndent(2)
                 .write(`${title}`)
                 .newline();
@@ -45,7 +45,7 @@ export default function () {
 
             this.productReport.captureTestItem(this.launchId, this.fixtureId, name, result, testRunInfo, self);
         },
-        
+
         async reportTaskDone (endTime, passed) {
             const durationMs  = endTime - this.startTime;
             const durationStr = this.moment
@@ -55,15 +55,17 @@ export default function () {
             let footer = passed === this.testCount ?
                          `${this.testCount} passed` :
                          `${this.testCount - passed}/${this.testCount} failed`;
-        
+
             footer += ` (Duration: ${durationStr})`;
-        
+
             this.newline()
                 .setIndent(0)
                 .write(footer)
                 .newline();
 
+            console.log("reportTaskDone: before finishLaunch")
             await this.productReport.finishLaunch(this.launchId);
+            console.log("reportTaskDone: after finishLaunch")
         }
     };
 }
