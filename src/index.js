@@ -4,7 +4,7 @@ export default function () {
     return {
         noColors: false,
 
-        reportTaskStart (startTime, userAgents, testCount) {
+        async reportTaskStart (startTime, userAgents, testCount) {
             this.startTime = startTime;
             this.testCount = testCount;
 
@@ -15,7 +15,7 @@ export default function () {
             this.launchId = this.productReport.startLaunch();
         },
 
-        reportFixtureStart (name) {
+        async reportFixtureStart (name) {
             this.fixtureId = this.productReport.captureFixtureItem(this.launchId, name);
 
             this.newline()
@@ -24,7 +24,7 @@ export default function () {
                 .newline();
         },
 
-        reportTestDone (name, testRunInfo) {
+        async reportTestDone (name, testRunInfo) {
             const self = this;
             const hasErr = !!testRunInfo.errs.length;
             const result = testRunInfo.skipped ? 'skipped' : hasErr ? 'failed' : 'passed';
@@ -63,9 +63,9 @@ export default function () {
                 .write(footer)
                 .newline();
 
-            console.log("reportTaskDone: before finishLaunch")
+            //console.log('reportTaskDone: before finishLaunch');
             await this.productReport.finishLaunch(this.launchId);
-            console.log("reportTaskDone: after finishLaunch")
+            console.log('reportTaskDone: after finishLaunch');
         }
     };
 }

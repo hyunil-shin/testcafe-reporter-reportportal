@@ -39,8 +39,16 @@ export default class ProductReport {
         const launchObj = this.rpClient.startLaunch({
             name: this.launchName,
             description: this.description,
-            tags: this.tagsList
+            tags: this.tagsList,
+            startTime: this.rpClient.helpers.now()
         });
+
+        // To know the real launch id wait for the method to finish. The real id is used by the client in asynchronous reporting.
+        // launchObj.promise.then((response) => {
+        //     console.log(`Launch real id: ${response.id}`);
+        // }, (error) => {
+        //     console.dir(`Error at the start of launch: ${error}`);
+        // })
 
         return launchObj.tempId;
     }
@@ -49,7 +57,8 @@ export default class ProductReport {
         if (!this.connected) return 'Unknown Test ID';
         const suiteObj = this.rpClient.startTestItem({
             name: fixtureName,
-            type: 'SUITE'
+            type: 'SUITE',
+            startTime: this.rpClient.helpers.now()
         }, launchId);
 
         this.fixtureList.push(suiteObj.tempId);
@@ -62,7 +71,7 @@ export default class ProductReport {
         var start_time = this.rpClient.helpers.now();
         const stepObj = this.rpClient.startTestItem({
             name: stepName,
-            start_time: start_time,
+            startTime: start_time,
             type: 'STEP'
         }, launchId, fixtureId);
 
@@ -101,31 +110,39 @@ export default class ProductReport {
 
         var testResult = {
             status: status,
-            end_time: start_time + testRunInfo.durationMs
+            endTime: start_time + testRunInfo.durationMs
         };
 
         if (status === 'skipped') testResult.issue = { issue_type: 'NOT_ISSUE' };
 
         this.rpClient.finishTestItem(stepObj.tempId, testResult);
+        console.log('finishTestItme');
     }
 
     async finishFixture() {
         if (!this.connected) return;
-        await Promise.all(this.fixtureList.map(async (fixtureId, idx) => {
-            await this.rpClient.finishTestItem(fixtureId, {
-                end_time: this.rpClient.helpers.now()
+        this.fixtureList.forEach((id) => {
+            this.rpClient.finishTestItem(id, {
+                endTime: this.rpClient.helpers.now()
             });
-        }));
+        });
+        //await new Promise(resolve => setTimeout(resolve, 10000));
+        //console.log('finishFixture: end');
     }
 
     async finishLaunch(launchId) {
-        console.log('finishLaunch: start')
+        //console.log('finishLaunch: start');
         if (!this.connected) return;
         await this.finishFixture();
-        await this.rpClient.finishLaunch(launchId, {
+        const f = this.rpClient.finishLaunch(launchId, {
             end_time: this.rpClient.helpers.now()
         });
-        console.log('finishLaunch: end')
+        await f.promise.then(() => {
+            console.log('all finished');
+        }, () => {
+            console.log('then2');
+        });
+        console.log('finishLaunch: end');
     }
 
 }

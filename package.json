@@ -12,9 +12,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "gulp test",
-    "publish-please": "publish-please",
-    "prepublish": "publish-please guard"
+    "test": "gulp test"
   },
   "keywords": [
     "testcafe",
@@ -39,7 +37,7 @@
     "babel-runtime": "^5.3.0",
     "dotenv": "^6.2.0",
     "envs": "^0.1.6",
-    "reportportal-js-client": "^1.0.2",
+    "reportportal-js-client": "^2.1.0",
     "strip-ansi": "^5.0.0"
   }
 }
